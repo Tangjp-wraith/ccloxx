@@ -34,8 +34,8 @@ void run(std::string source) {
 }
 
 void runFile(std::string path) {
-  std::string contests = readFile(path);
-  run(contests);
+  std::string contents = readFile(path);
+  run(contents);
 
   // Indicate an error in the exit code.
   if (hadError) {

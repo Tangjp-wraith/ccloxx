@@ -11,6 +11,7 @@ std::string Token::toString() const {
       break;
     case (STRING):
       literal_text = std::any_cast<std::string>(literal_);
+      break;
     case (NUMBER):
       literal_text = std::to_string(std::any_cast<double>(literal_));
       break;

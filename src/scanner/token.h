@@ -108,6 +108,8 @@ class Token {
         literal_(std::move(literal)),
         line_(line) {}
 
+  TokenType getType() { return type_; }
+
   std::string toString() const;
 
  private:

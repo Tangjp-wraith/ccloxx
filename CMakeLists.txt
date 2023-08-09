@@ -21,8 +21,4 @@ add_executable(lox
   src/lox.cc
 )
 
-
-# target_link_libraries(test
-#   GTest::GTest
-#   GTest::Main
-# )
+add_subdirectory(src/scanner)
