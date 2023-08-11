@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "token.h"
+#include "../types/token.h"
 
 std::vector<std::string> readExpected(std::string path) {
   std::vector<std::string> lines;

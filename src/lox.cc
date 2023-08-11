@@ -6,7 +6,7 @@
 
 #include "error/error.h"
 #include "scanner/scanner.h"
-#include "scanner/token.h"
+#include "types/token.h"
 
 std::string readFile(std::string path) {
   std::ifstream file{path.data(),

@@ -3,7 +3,7 @@
 #include <ctime>
 #include <vector>
 
-#include "token.h"
+#include "../types/token.h"
 
 std::vector<Token> Scanner::scanTokens() {
   while (!isAtEnd()) {
