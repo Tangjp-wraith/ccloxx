@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include "../types/token.h"
+
 inline bool hadError = false;
 
 static void report(int line, std::string where, std::string msg) {
@@ -10,4 +12,12 @@ static void report(int line, std::string where, std::string msg) {
   hadError = true;
 }
 
-inline void Error(int line, std::string msg) { report(line, "", msg); }
+inline void error(int line, std::string msg) { report(line, "", msg); }
+
+inline void error(const Token& token, std::string msg) {
+  if (token.type_ == END_OF_FILE) {
+    report(token.line_, "at end", msg);
+  } else {
+    report(token.line_, " at '" + token.lexeme_ + "'", msg);
+  }
+}

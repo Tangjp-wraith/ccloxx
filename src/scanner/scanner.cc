@@ -85,7 +85,7 @@ void Scanner::scanToken() {
       } else if (isAlpha(c)) {
         identifier();
       } else {
-        Error(line_, "Unexpected character.");
+       error(line_, "Unexpected character.");
       }
       break;
   }
@@ -133,7 +133,7 @@ void Scanner::string() {
     advance();
   }
   if (isAtEnd()) {
-    Error(line_, "Unterminated string.");
+   error(line_, "Unterminated string.");
     return;
   }
   advance();

@@ -2,9 +2,12 @@
 #include <cstring>  // std::strerror
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 
+#include "ast/ast_printer.h"
 #include "error/error.h"
+#include "parser/parser.h"
 #include "scanner/scanner.h"
 #include "types/token.h"
 
@@ -27,10 +30,13 @@ void run(std::string source) {
   Scanner scanner{source};
   std::vector<Token> tokens = scanner.scanTokens();
 
-  // For now, just print the tokens.
-  for (const Token& token : tokens) {
-    std::cout << token.toString() << "\n";
-  }
+  Parser parser{tokens};
+  std::shared_ptr<Expr> expression = parser.parse();
+
+  // Stop if there was a syntax error.
+  if (hadError) return;
+
+  std::cout << AstPrinter{}.print(expression) <<"\n";
 }
 
 void runFile(std::string path) {

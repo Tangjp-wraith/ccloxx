@@ -15,6 +15,10 @@ include_directories(${GTest_INCLUDE_DIRS})
 add_executable(lox
   src/scanner/scanner.h
   src/scanner/scanner.cc
+  src/ast/expr.h
+  src/ast/ast_printer.h
+  src/parser/parser.h
+  src/parser/parser.cc
   src/types/token.h
   src/types/token.cc
   src/error/error.h
