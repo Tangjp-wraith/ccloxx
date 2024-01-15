@@ -36,7 +36,7 @@ void run(std::string source) {
   // Stop if there was a syntax error.
   if (hadError) return;
 
-  std::cout << AstPrinter{}.print(expression) <<"\n";
+  std::cout << AstPrinter{}.print(expression) << "\n";
 }
 
 void runFile(std::string path) {

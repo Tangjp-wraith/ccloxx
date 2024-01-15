@@ -1,10 +1,7 @@
 #include "parser.h"
 
-#include <sys/types.h>
-
 #include <cassert>
 #include <memory>
-#include <type_traits>
 
 #include "../error/error.h"
 

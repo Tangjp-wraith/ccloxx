@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-#include "../types/token.h"
-
 std::vector<std::string> readExpected(std::string path) {
   std::vector<std::string> lines;
   std::ifstream file(path);

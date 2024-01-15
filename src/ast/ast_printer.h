@@ -25,7 +25,7 @@ class AstPrinter : public ExprVisitor {
   }
 
   std::any visitLiteralExpr(std::shared_ptr<Literal> expr) override {
-    auto& value_type = expr->value.type();
+    auto &value_type = expr->value.type();
 
     if (value_type == typeid(nullptr)) {
       return "nil";

@@ -1,9 +1,6 @@
 #include "scanner.h"
 
-#include <ctime>
 #include <vector>
-
-#include "../types/token.h"
 
 std::vector<Token> Scanner::scanTokens() {
   while (!isAtEnd()) {
@@ -85,7 +82,7 @@ void Scanner::scanToken() {
       } else if (isAlpha(c)) {
         identifier();
       } else {
-       error(line_, "Unexpected character.");
+        error(line_, "Unexpected character.");
       }
       break;
   }
@@ -133,7 +130,7 @@ void Scanner::string() {
     advance();
   }
   if (isAtEnd()) {
-   error(line_, "Unterminated string.");
+    error(line_, "Unterminated string.");
     return;
   }
   advance();
