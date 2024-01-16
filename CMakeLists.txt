@@ -25,6 +25,7 @@ add_executable(lox
         src/lox.cc
         src/ast/interpreter.h
         src/ast/interpreter.cc
+        src/error/RuntimeError.h
 )
 
 add_subdirectory(src/scanner)

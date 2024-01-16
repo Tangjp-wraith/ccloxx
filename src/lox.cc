@@ -6,6 +6,7 @@
 #include <string>
 
 #include "ast/ast_printer.h"
+#include "ast/interpreter.h"
 #include "error/error.h"
 #include "parser/parser.h"
 #include "scanner/scanner.h"
@@ -26,6 +27,8 @@ std::string readFile(std::string path) {
   return contents;
 }
 
+Interpreter interpreter{};
+
 void run(std::string source) {
   Scanner scanner{source};
   std::vector<Token> tokens = scanner.scanTokens();
@@ -36,7 +39,7 @@ void run(std::string source) {
   // Stop if there was a syntax error.
   if (hadError) return;
 
-  std::cout << AstPrinter{}.print(expression) << "\n";
+  interpreter.interpreter(expression);
 }
 
 void runFile(std::string path) {
@@ -44,18 +47,15 @@ void runFile(std::string path) {
   run(contents);
 
   // Indicate an error in the exit code.
-  if (hadError) {
-    std::exit(65);
-  }
+  if (hadError) std::exit(65);
+  if (hadRuntimeError) std::exit(70);
 }
 
 void runPrompt() {
   while (1) {
     std::cout << "> ";
     std::string line;
-    if (!std::getline(std::cin, line)) {
-      break;
-    }
+    if (!std::getline(std::cin, line)) break;
     run(line);
     hadError = false;
   }

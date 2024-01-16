@@ -47,7 +47,7 @@ std::string toLowerCase(std::string_view str) {
 // messes for us. Instead of having to worry about calling delete
 // every time we're done with some heap memory, we can dump this job
 // onto std::shared_ptr. This function lets us use a '*' in our
-// metaprogram to indicate that we actually want a smart pointer.
+// metaprogramming to indicate that we actually want a smart pointer.
 std::string fix_pointer(std::string_view field) {
   std::ostringstream out;
   std::string_view type = split(field, " ")[0];
@@ -165,7 +165,7 @@ void defineAst(const std::string& outputDir, const std::string& baseName,
   // The base class.
   // C++ does not allow virtual methods to be templated. That means
   // multiple accept signatures are out -- at least if we don't want
-  // to over complicate things. An alternative is to use std::any,
+  // to overcomplicate things. An alternative is to use std::any,
   // which holds values of any type in a type-safe way. Classes
   // implementing the base class are then required to cast the return
   // value to the expected type inside their member functions.
