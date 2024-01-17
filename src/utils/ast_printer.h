@@ -8,7 +8,7 @@
 #include <string>
 #include <type_traits>
 
-#include "expr.h"
+#include "../treewalk/expr.h"
 
 class AstPrinter : public ExprVisitor {
  public:

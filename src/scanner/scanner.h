@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "../error/error.h"
-#include "../types/token.h"
+#include "../token/token.h"
+#include "../utils/error.h"
 
 class Scanner {
  public:

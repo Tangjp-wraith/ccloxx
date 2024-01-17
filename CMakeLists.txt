@@ -15,18 +15,17 @@ include_directories(${GTest_INCLUDE_DIRS})
 add_executable(lox
         src/scanner/scanner.h
         src/scanner/scanner.cc
-        src/ast/expr.h
-        src/ast/ast_printer.h
-        src/parser/parser.h
-        src/parser/parser.cc
-        src/types/token.h
-        src/types/token.cc
-        src/error/error.h
+        src/treewalk/expr.h
+        src/treewalk/parser.h
+        src/treewalk/parser.cc
+        src/token/token.h
+        src/token/token.cc
+        src/utils/error.h
         src/lox.cc
-        src/ast/interpreter.h
-        src/ast/interpreter.cc
-        src/error/RuntimeError.h
+        src/treewalk/interpreter.h
+        src/treewalk/interpreter.cc
+        src/treewalk/RuntimeError.h
 )
 
 add_subdirectory(src/scanner)
-add_subdirectory(src/ast)
+add_subdirectory(src/utils)

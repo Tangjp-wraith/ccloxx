@@ -5,7 +5,7 @@
 #include <utility>  // std::move
 #include <vector>
 
-#include "../types/token.h"
+#include "../token/token.h"
 
 struct Binary;
 struct Grouping;

@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../ast/expr.h"
-#include "../types/token.h"
+#include "expr.h"
+#include "../token/token.h"
 
 using ExprPtr = std::shared_ptr<Expr>;
 

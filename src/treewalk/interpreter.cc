@@ -1,7 +1,6 @@
 #include "interpreter.h"
 
-#include "../error/RuntimeError.h"
-#include "../error/error.h"
+#include "RuntimeError.h"
 
 std::any Interpreter::visitLiteralExpr(std::shared_ptr<Literal> expr) {
   return expr->value;

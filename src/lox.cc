@@ -5,12 +5,12 @@
 #include <memory>
 #include <string>
 
-#include "ast/ast_printer.h"
-#include "ast/interpreter.h"
-#include "error/error.h"
-#include "parser/parser.h"
 #include "scanner/scanner.h"
-#include "types/token.h"
+#include "token/token.h"
+#include "treewalk/interpreter.h"
+#include "treewalk/parser.h"
+#include "utils/error.h"
+#include "treewalk/RuntimeError.h"
 
 std::string readFile(std::string path) {
   std::ifstream file{path.data(),

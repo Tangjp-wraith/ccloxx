@@ -3,7 +3,7 @@
 #include <cassert>
 #include <memory>
 
-#include "../error/error.h"
+#include "../utils/error.h"
 
 Token Parser::previous() { return tokens_.at(current_ - 1); }
 
