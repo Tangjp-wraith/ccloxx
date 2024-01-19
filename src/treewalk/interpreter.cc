@@ -1,7 +1,16 @@
 #include "interpreter.h"
 
-#include "RuntimeError.h"
+#include "runtime_error.h"
 
+void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>>& statements) {
+  try {
+    for (auto statement : statements) {
+      execute(statement);
+    }
+  } catch (RuntimeError error) {
+    runtimeError(error);
+  }
+}
 std::any Interpreter::visitLiteralExpr(std::shared_ptr<Literal> expr) {
   return expr->value;
 }
@@ -64,6 +73,14 @@ std::any Interpreter::visitBinaryExpr(std::shared_ptr<Binary> expr) {
       return std::any{};
   }
 }
+std::any Interpreter::visitVariableExpr(std::shared_ptr<Variable> expr) {
+  return environment->get(expr->name);
+}
+std::any Interpreter::visitAssignExpr(std::shared_ptr<Assign> expr) {
+  std::any value = evaluate(expr->value);
+  environment->assign(expr->name, value);
+  return value;
+}
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr) {
   return expr->accept(*this);
 }
@@ -101,14 +118,7 @@ void Interpreter::checkNumberOperand(const Token& op, const std::any& left,
   if (left.type() == typeid(double) && right.type() == typeid(double)) return;
   throw RuntimeError{op, "Operand must be two numbers!"};
 }
-void Interpreter::interpreter(std::shared_ptr<Expr> expression) {
-  try {
-    std::any value = evaluate(expression);
-    std::cout << stringify(value) << "\n";
-  } catch (RuntimeError error) {
-    runtimeError(error);
-  }
-}
+
 std::string Interpreter::stringify(const std::any& value) {
   if (value.type() == typeid(nullptr)) return "nil";
   if (value.type() == typeid(double)) {
@@ -126,4 +136,41 @@ std::string Interpreter::stringify(const std::any& value) {
     return std::any_cast<bool>(value) ? "true" : "false";
   }
   return "Error in stringify: value type not recognized!";
+}
+std::any Interpreter::visitExpressionStmt(std::shared_ptr<Expression> stmt) {
+  evaluate(stmt->expression);
+  return std::any{};
+}
+std::any Interpreter::visitPrintStmt(std::shared_ptr<Print> stmt) {
+  std::any value = evaluate(stmt->expression);
+  std::cout << stringify(value) << "\n";
+  return std::any{};
+}
+std::any Interpreter::visitVarStmt(std::shared_ptr<Var> stmt) {
+  std::any value = nullptr;
+  if (stmt->initializer != nullptr) {
+    value = evaluate(stmt->initializer);
+  }
+  environment->define(stmt->name.lexeme_, std::move(value));
+  return std::any{};
+}
+std::any Interpreter::visitBlockStmt(std::shared_ptr<Block> stmt) {
+  executeBlock(stmt->statements, std::make_shared<Environment>(environment));
+  return std::any{};
+}
+void Interpreter::execute(std::shared_ptr<Stmt> stmt) { stmt->accept(*this); }
+void Interpreter::executeBlock(
+    const std::vector<std::shared_ptr<Stmt>>& statements,
+    std::shared_ptr<Environment> environment1) {
+  std::shared_ptr<Environment> previous = this->environment;
+  try {
+    this->environment = environment1;
+    for (auto& statement : statements) {
+      execute(statement);
+    }
+  } catch (...) {
+    this->environment = previous;
+    throw;
+  }
+  this->environment = previous;
 }

@@ -24,7 +24,10 @@ add_executable(lox
         src/lox.cc
         src/treewalk/interpreter.h
         src/treewalk/interpreter.cc
-        src/treewalk/RuntimeError.h
+        src/treewalk/runtime_error.h
+        src/treewalk/stmt.h
+        src/treewalk/environment.cc
+        src/treewalk/environment.h
 )
 
 add_subdirectory(src/scanner)

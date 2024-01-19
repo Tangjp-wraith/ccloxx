@@ -5,10 +5,12 @@
 #include <stdexcept>
 #include <vector>
 
-#include "expr.h"
 #include "../token/token.h"
+#include "expr.h"
+#include "stmt.h"
 
 using ExprPtr = std::shared_ptr<Expr>;
+using StmtPtr = std::shared_ptr<Stmt>;
 
 class Parser {
   struct ParseError : public std::runtime_error {
@@ -18,7 +20,7 @@ class Parser {
  public:
   Parser(const std::vector<Token>& tokens) : tokens_{tokens} {}
 
-  ExprPtr parse();
+  std::vector<StmtPtr> parse();
 
  private:
   ExprPtr expression();
@@ -28,6 +30,13 @@ class Parser {
   ExprPtr factor();
   ExprPtr unary();
   ExprPtr primary();
+  ExprPtr assignment();
+
+  StmtPtr statement();
+  StmtPtr declaration();
+  StmtPtr printStatement();
+  StmtPtr expressionStatement();
+  StmtPtr varDeclaration();
 
   template <class... T>
   bool match(T... type);
@@ -39,6 +48,7 @@ class Parser {
   Token peek();
   ParseError error(const Token& token, std::string msg);
   void synchronize();
+  std::vector<StmtPtr> block();
 
   const std::vector<Token>& tokens_;
   int current_{0};

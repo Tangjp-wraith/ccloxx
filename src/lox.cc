@@ -9,8 +9,8 @@
 #include "token/token.h"
 #include "treewalk/interpreter.h"
 #include "treewalk/parser.h"
+#include "treewalk/runtime_error.h"
 #include "utils/error.h"
-#include "treewalk/RuntimeError.h"
 
 std::string readFile(std::string path) {
   std::ifstream file{path.data(),
@@ -34,12 +34,12 @@ void run(std::string source) {
   std::vector<Token> tokens = scanner.scanTokens();
 
   Parser parser{tokens};
-  std::shared_ptr<Expr> expression = parser.parse();
+  auto statements = parser.parse();
 
   // Stop if there was a syntax error.
   if (hadError) return;
 
-  interpreter.interpreter(expression);
+  interpreter.interpret(statements);
 }
 
 void runFile(std::string path) {

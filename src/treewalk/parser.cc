@@ -52,7 +52,7 @@ ExprPtr Parser::equality() {
   return expr;
 }
 
-ExprPtr Parser::expression() { return equality(); }
+ExprPtr Parser::expression() { return assignment(); }
 
 ExprPtr Parser::comparison() {
   ExprPtr expr = term();
@@ -111,7 +111,24 @@ ExprPtr Parser::primary() {
     consume(RIGHT_PAREN, "Expect ')' after expression.");
     return std::make_shared<Grouping>(expr);
   }
+  if (match(IDENTIFIER)) {
+    return std::make_shared<Variable>(previous());
+  }
   throw error(peek(), "Expect expression.");
+}
+
+ExprPtr Parser::assignment() {
+  ExprPtr expr = equality();
+  if (match(EQUAL)) {
+    Token equals = previous();
+    ExprPtr value = assignment();
+    if (Variable* e = dynamic_cast<Variable*>(expr.get())) {
+      Token name = e->name;
+      return std::make_shared<Assign>(std::move(name), value);
+    }
+    error(std::move(equals), "Invalid assignment target!");
+  }
+  return expr;
 }
 
 Parser::ParseError Parser::error(const Token& token, std::string msg) {
@@ -140,11 +157,51 @@ void Parser::synchronize() {
     }
   }
 }
-
-ExprPtr Parser::parse() {
+std::vector<StmtPtr> Parser::parse() {
+  std::vector<StmtPtr> statements;
+  while (!isAtEnd()) {
+    statements.push_back(declaration());
+  }
+  return statements;
+}
+StmtPtr Parser::statement() {
+  if (match(PRINT)) return printStatement();
+  if (match(LEFT_BRACE)) return std::make_shared<Block>(block());
+  return expressionStatement();
+}
+StmtPtr Parser::printStatement() {
+  ExprPtr value = expression();
+  consume(SEMICOLON, "Expect ';' after value!");
+  return std::make_shared<Print>(value);
+}
+StmtPtr Parser::expressionStatement() {
+  ExprPtr expr = expression();
+  consume(SEMICOLON, "Expect ';' after expression!");
+  return std::make_shared<Expression>(expr);
+}
+StmtPtr Parser::declaration() {
   try {
-    return expression();
+    if (match(VAR)) return varDeclaration();
+    return statement();
   } catch (ParseError error) {
+    synchronize();
     return nullptr;
   }
+}
+StmtPtr Parser::varDeclaration() {
+  Token name = consume(IDENTIFIER, "Expect variable name!");
+  ExprPtr initializer = nullptr;
+  if (match(EQUAL)) {
+    initializer = expression();
+  }
+  consume(SEMICOLON, "Expect ';' after expression!");
+  return std::make_shared<Var>(std::move(name), initializer);
+}
+std::vector<StmtPtr> Parser::block() {
+  std::vector<StmtPtr> statements;
+  while (!check(RIGHT_BRACE) && !isAtEnd()) {
+    statements.push_back(declaration());
+  }
+  consume(RIGHT_BRACE, "Expect '}' after block!");
+  return statements;
 }

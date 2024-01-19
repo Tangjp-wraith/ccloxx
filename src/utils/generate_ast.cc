@@ -149,7 +149,7 @@ void defineAst(const std::string& outputDir, const std::string& baseName,
             "#include <memory>\n"
             "#include <utility>  // std::move\n"
             "#include <vector>\n"
-            "#include \"../types/token.h\"\n"
+            "#include \"../token/token.h\"\n"
             "\n";
 
   // Forward declare the AST classes.
@@ -193,8 +193,13 @@ int main(int argc, char* argv[]) {
   }
   std::string outputDir = argv[1];
 
-  defineAst(outputDir, "Expr",
-            {"Binary   : Expr* left, Token op, Expr* right",
-             "Grouping : Expr* expression", "Literal  : std::any value",
-             "Unary    : Token op, Expr* right"});
+  //    defineAst(outputDir, "Expr",
+  //              {"Binary   : Expr* left, Token op, Expr* right",
+  //               "Grouping : Expr* expression", "Literal  : std::any value",
+  //               "Unary    : Token op, Expr* right",
+  //             "Assign : Token name, Expr* value"});
+  defineAst(outputDir, "Stmt",
+            {"Block      : std::vector<Stmt*> statements",
+             "Expression : Expr* expression", "Print      : Expr* expression",
+             "Var        : Token name, Expr* initializer"});
 }
