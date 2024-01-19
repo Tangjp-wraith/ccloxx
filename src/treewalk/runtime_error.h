@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
+
 #include "../token/token.h"
 
 inline bool hadRuntimeError = false;
