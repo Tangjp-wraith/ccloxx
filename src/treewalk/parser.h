@@ -31,13 +31,15 @@ class Parser {
   ExprPtr unary();
   ExprPtr primary();
   ExprPtr assignment();
-
+  ExprPtr orExpression();
+  ExprPtr andExpression();
   StmtPtr statement();
   StmtPtr declaration();
   StmtPtr printStatement();
   StmtPtr expressionStatement();
   StmtPtr varDeclaration();
-
+  StmtPtr ifStatement();
+  StmtPtr whileStatement();
   template <class... T>
   bool match(T... type);
   Token consume(TokenType type, std::string msg);
@@ -52,4 +54,5 @@ class Parser {
 
   const std::vector<Token>& tokens_;
   int current_{0};
+  StmtPtr forStatement();
 };

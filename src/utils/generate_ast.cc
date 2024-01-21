@@ -187,19 +187,24 @@ void defineAst(const std::string& outputDir, const std::string& baseName,
 }
 
 int main(int argc, char* argv[]) {
-  if (argc != 2) {
-    std::cout << "Usage: generate_ast <output directory>\n";
-    std::exit(64);
-  }
-  std::string outputDir = argv[1];
+  //  if (argc != 2) {
+  //    std::cout << "Usage: generate_ast <output directory>\n";
+  //    std::exit(64);
+  //  }
+  std::string outputDir = "./";
 
-  //    defineAst(outputDir, "Expr",
-  //              {"Binary   : Expr* left, Token op, Expr* right",
-  //               "Grouping : Expr* expression", "Literal  : std::any value",
-  //               "Unary    : Token op, Expr* right",
-  //             "Assign : Token name, Expr* value"});
+  defineAst(outputDir, "Expr",
+            {"Assign   : Token name, Expr* value",
+             "Binary   : Expr* left, Token op, Expr* right",
+             "Grouping : Expr* expression", "Literal  : std::any value",
+             "Logical  : Expr* left, Token op, Expr* right",
+             "Unary    : Token op, Expr* right", "Variable : Token name"});
   defineAst(outputDir, "Stmt",
             {"Block      : std::vector<Stmt*> statements",
-             "Expression : Expr* expression", "Print      : Expr* expression",
-             "Var        : Token name, Expr* initializer"});
+             "Expression : Expr* expression",
+             "If         : Expr* condition, Stmt* thenBranch,"
+             " Stmt* elseBranch",
+             "Print      : Expr* expression",
+             "Var        : Token name, Expr* initializer",
+             "While      : Expr* condition, Stmt* body"});
 }

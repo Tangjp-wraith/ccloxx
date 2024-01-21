@@ -81,6 +81,15 @@ std::any Interpreter::visitAssignExpr(std::shared_ptr<Assign> expr) {
   environment->assign(expr->name, value);
   return value;
 }
+std::any Interpreter::visitLogicalExpr(std::shared_ptr<Logical> expr) {
+  std::any left = evaluate(expr->left);
+  if (expr->op.type_ == OR) {
+    if (isTruthy(left)) return left;
+  } else {
+    if (!isTruthy(left)) return left;
+  }
+  return evaluate(expr->right);
+}
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr) {
   return expr->accept(*this);
 }
@@ -158,6 +167,21 @@ std::any Interpreter::visitBlockStmt(std::shared_ptr<Block> stmt) {
   executeBlock(stmt->statements, std::make_shared<Environment>(environment));
   return std::any{};
 }
+std::any Interpreter::visitIfStmt(std::shared_ptr<If> stmt) {
+  if (isTruthy(evaluate(stmt->condition))) {
+    execute(stmt->thenBranch);
+  } else if (stmt->elseBranch != nullptr) {
+    execute(stmt->elseBranch);
+  }
+  return std::any{};
+}
+std::any Interpreter::visitWhileStmt(std::shared_ptr<While> stmt) {
+  while (isTruthy(evaluate(stmt->condition))) {
+    execute(stmt->body);
+  }
+  return std::any{};
+}
+
 void Interpreter::execute(std::shared_ptr<Stmt> stmt) { stmt->accept(*this); }
 void Interpreter::executeBlock(
     const std::vector<std::shared_ptr<Stmt>>& statements,
