@@ -90,7 +90,19 @@ ExprPtr Parser::unary() {
     ExprPtr right = unary();
     return std::make_shared<Unary>(std::move(op), right);
   }
-  return primary();
+  return call();
+}
+
+ExprPtr Parser::call() {
+  ExprPtr expr = primary();
+  while (true) {
+    if (match(LEFT_PAREN)) {
+      expr = finishCall(expr);
+    } else {
+      break;
+    }
+  }
+  return expr;
 }
 
 ExprPtr Parser::primary() {
@@ -148,6 +160,23 @@ ExprPtr Parser::andExpression() {
   }
   return expr;
 }
+
+ExprPtr Parser::finishCall(ExprPtr callee) {
+  std::vector<ExprPtr> arguments;
+  if (!check(RIGHT_PAREN)) {
+    do {
+      if (arguments.size() >= 255) {
+        error(peek(), "Can't have more than 255 arguments!");
+      }
+      arguments.emplace_back(expression());
+    } while (match(COMMA));
+  }
+
+  Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments.");
+
+  return std::make_shared<Call>(callee, std::move(paren), std::move(arguments));
+}
+
 Parser::ParseError Parser::error(const Token& token, std::string msg) {
   ::error(token, msg);
   return ParseError{""};
@@ -185,6 +214,7 @@ StmtPtr Parser::statement() {
   if (match(FOR)) return forStatement();
   if (match(IF)) return ifStatement();
   if (match(PRINT)) return printStatement();
+  if (match(RETURN)) return returnStatement();
   if (match(WHILE)) return whileStatement();
   if (match(LEFT_BRACE)) return std::make_shared<Block>(block());
   return expressionStatement();
@@ -201,6 +231,7 @@ StmtPtr Parser::expressionStatement() {
 }
 StmtPtr Parser::declaration() {
   try {
+    if (match(FUN)) return function("function");
     if (match(VAR)) return varDeclaration();
     return statement();
   } catch (ParseError error) {
@@ -262,7 +293,7 @@ StmtPtr Parser::forStatement() {
   if (!check(RIGHT_PAREN)) {
     increment = expression();
   }
-  consume(RIGHT_PAREN, "Expect ')' after for clauses");
+  consume(RIGHT_PAREN, "Expect ')' after for clauses!");
   StmtPtr body = statement();
   if (increment != nullptr) {
     body = std::make_shared<Block>(
@@ -276,4 +307,33 @@ StmtPtr Parser::forStatement() {
     body = std::make_shared<Block>(std::vector<StmtPtr>{initializer, body});
   }
   return body;
+}
+
+StmtPtr Parser::returnStatement() {
+  Token keyword = previous();
+  ExprPtr value;
+  if (!check(SEMICOLON)) {
+    value = expression();
+  }
+  consume(SEMICOLON, "Expect ';' after return value!");
+  return std::make_shared<Return>(keyword, value);
+}
+
+StmtPtr Parser::function(std::string kind) {
+  Token name = consume(IDENTIFIER, "Expect " + kind + " name!");
+  consume(LEFT_PAREN, "Expect '(' after " + kind + " name!");
+  std::vector<Token> parameters;
+  if (!match(RIGHT_PAREN)) {
+    do {
+      if (parameters.size() >= 255) {
+        error(peek(), "Can't have more than 255 parameters!");
+      }
+      parameters.emplace_back(consume(IDENTIFIER, "Expect parameter name!"));
+    } while (match(COMMA));
+  }
+  consume(RIGHT_PAREN, "Expect ')' after parameters!");
+  consume(LEFT_BRACE, "Expect '{' before " + kind + "body!");
+  std::vector<StmtPtr> body = block();
+  return std::make_shared<Function>(std::move(name), std::move(parameters),
+                                    std::move(body));
 }

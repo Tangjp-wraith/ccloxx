@@ -1,5 +1,7 @@
 #include "interpreter.h"
 
+#include "LoxFunction.h"
+#include "LoxReturn.h"
 #include "runtime_error.h"
 
 void Interpreter::interpret(std::vector<std::shared_ptr<Stmt>>& statements) {
@@ -90,6 +92,30 @@ std::any Interpreter::visitLogicalExpr(std::shared_ptr<Logical> expr) {
   }
   return evaluate(expr->right);
 }
+
+std::any Interpreter::visitCallExpr(std::shared_ptr<Call> expr) {
+  std::any callee = evaluate(expr->callee);
+  std::vector<std::any> arguments;
+  for (const auto& argument : expr->arguments) {
+    arguments.emplace_back(evaluate(argument));
+  }
+  std::shared_ptr<LoxCallable> function;
+  if (callee.type() == typeid(std::shared_ptr<LoxFunction>)) {
+    function = std::any_cast<std::shared_ptr<LoxFunction>>(callee);
+  } else {
+    throw RuntimeError{expr->paren, "Can only call function and classes!"};
+  }
+
+  if (arguments.size() != function->arity()) {
+    throw RuntimeError{expr->paren, "Expected" +
+                                        std::to_string(function->arity()) +
+                                        " arguments but got " +
+                                        std::to_string(arguments.size()) + "!"};
+  }
+
+  return function->call(*this, std::move(arguments));
+}
+
 std::any Interpreter::evaluate(std::shared_ptr<Expr> expr) {
   return expr->accept(*this);
 }
@@ -197,4 +223,16 @@ void Interpreter::executeBlock(
     throw;
   }
   this->environment = previous;
+}
+std::any Interpreter::visitFunctionStmt(std::shared_ptr<Function> stmt) {
+  auto function = std::make_shared<LoxFunction>(stmt, environment);
+  environment->define(stmt->name.lexeme_, function);
+  return std::any{};
+}
+std::any Interpreter::visitReturnStmt(std::shared_ptr<Return> stmt) {
+  std::any value = nullptr;
+  if (stmt->value != nullptr) {
+    value = evaluate(stmt->value);
+  }
+  throw LoxReturn{value};
 }

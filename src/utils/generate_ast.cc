@@ -196,15 +196,20 @@ int main(int argc, char* argv[]) {
   defineAst(outputDir, "Expr",
             {"Assign   : Token name, Expr* value",
              "Binary   : Expr* left, Token op, Expr* right",
+             "Call     : Expr* callee, Token paren,"
+             " std::vector<Expr*> arguments",
              "Grouping : Expr* expression", "Literal  : std::any value",
              "Logical  : Expr* left, Token op, Expr* right",
              "Unary    : Token op, Expr* right", "Variable : Token name"});
   defineAst(outputDir, "Stmt",
             {"Block      : std::vector<Stmt*> statements",
              "Expression : Expr* expression",
+             "Function   : Token name, std::vector<Token> params,"
+             " std::vector<Stmt*> body",
              "If         : Expr* condition, Stmt* thenBranch,"
              " Stmt* elseBranch",
              "Print      : Expr* expression",
+             "Return     : Token keyword, Expr* value",
              "Var        : Token name, Expr* initializer",
              "While      : Expr* condition, Stmt* body"});
 }

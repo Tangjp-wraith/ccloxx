@@ -28,6 +28,11 @@ add_executable(lox
         src/treewalk/stmt.h
         src/treewalk/environment.cc
         src/treewalk/environment.h
+        src/treewalk/LoxCallable.h
+        src/treewalk/LoxCallable.h
+        src/treewalk/LoxFunction.h
+        src/treewalk/LoxFunction.cc
+        src/treewalk/LoxReturn.h
 )
 
 add_subdirectory(src/scanner)
