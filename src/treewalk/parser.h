@@ -44,7 +44,6 @@ class Parser {
   StmtPtr ifStatement();
   StmtPtr whileStatement();
   StmtPtr forStatement();
-  StmtPtr function(std::string kind);
   StmtPtr returnStatement();
 
   template <class... T>
@@ -58,6 +57,7 @@ class Parser {
   ParseError error(const Token& token, std::string msg);
   void synchronize();
   std::vector<StmtPtr> block();
+  std::shared_ptr<Function> function(std::string kind);
 
   const std::vector<Token>& tokens_;
   int current_{0};

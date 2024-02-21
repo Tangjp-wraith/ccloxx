@@ -311,7 +311,7 @@ StmtPtr Parser::forStatement() {
 
 StmtPtr Parser::returnStatement() {
   Token keyword = previous();
-  ExprPtr value;
+  ExprPtr value = nullptr;
   if (!check(SEMICOLON)) {
     value = expression();
   }
@@ -319,11 +319,11 @@ StmtPtr Parser::returnStatement() {
   return std::make_shared<Return>(keyword, value);
 }
 
-StmtPtr Parser::function(std::string kind) {
+std::shared_ptr<Function> Parser::function(std::string kind) {
   Token name = consume(IDENTIFIER, "Expect " + kind + " name!");
   consume(LEFT_PAREN, "Expect '(' after " + kind + " name!");
   std::vector<Token> parameters;
-  if (!match(RIGHT_PAREN)) {
+  if (!check(RIGHT_PAREN)) {
     do {
       if (parameters.size() >= 255) {
         error(peek(), "Can't have more than 255 parameters!");
